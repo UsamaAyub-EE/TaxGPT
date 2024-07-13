@@ -1,6 +1,12 @@
 "use client";
 
-import { Box, List, ListItem, ListItemText } from "@mui/material";
+import {
+  Box,
+  Divider,
+  List,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
 import { InputFileUpload } from "@/shared/components";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -29,6 +35,7 @@ export default function Home() {
       .post("/file_uploads/upload/", formData)
       .then((response) => {
         console.log(response);
+        fetchFiles();
       })
       .catch((error) => {
         console.error(error);
@@ -39,24 +46,48 @@ export default function Home() {
     fetchFiles();
   }, []);
 
+  const handleFileClick = (fileId, fileName) => {
+    axios
+      .get(`/file_uploads/files/${fileId}/`, {
+        responseType: "blob",
+      })
+      .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   return (
     <Box
       sx={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        flexDirection: 'column',
+        flexDirection: "column",
         height: "100vh",
         width: "100vw",
       }}
     >
       <InputFileUpload handleFileUpload={handleFileUpload} />
 
+      <Divider variant="fullWidth" />
+
       <List>
         {files.map((file, index) => (
-          <ListItem key={index}>
-            <ListItemText primary={file.file} />
-          </ListItem>
+          <ListItemButton
+            key={index}
+            onClick={() => handleFileClick(file.id, file.name)}
+          >
+            <ListItemText primary={file.name} />
+          </ListItemButton>
         ))}
       </List>
     </Box>

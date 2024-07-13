@@ -3,11 +3,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import FileModel
 from .serializers import FileModelSerializer
-import ipdb
+from django.http import FileResponse, Http404
 
 class FileUploadView(APIView):
     def post(self, request, *args, **kwargs):
-        ipdb.set_trace()
         serializer = FileModelSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -17,5 +16,13 @@ class FileUploadView(APIView):
 class FileListView(APIView):
     def get(self, request, *args, **kwargs):
         files = FileModel.objects.all()
-        serializer = FileModelSerializer(files, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        file_data = [{"id": file.id, "name": file.file.name.split('/')[-1]} for file in files]
+        return Response(file_data, status=status.HTTP_200_OK)
+
+class FileDetailView(APIView):
+    def get(self, request, file_id, *args, **kwargs):
+        try:
+            file = FileModel.objects.get(id=file_id)
+            return FileResponse(file.file.open(), content_type='application/octet-stream')
+        except FileModel.DoesNotExist:
+            raise Http404("File does not exist")

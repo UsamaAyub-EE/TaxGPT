@@ -1,5 +1,11 @@
-/bin
-/include
+bin/
+include/
 /lib*
 db.sqlite3
-/share
+share/
+media/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class

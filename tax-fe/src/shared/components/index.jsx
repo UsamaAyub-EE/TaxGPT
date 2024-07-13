@@ -1,3 +1,3 @@
-import { InputFileUpload } from "./FileUploadButton";
+import { InputFileUpload } from './FileUploadButton'
 
-export { InputFileUpload };
+export { InputFileUpload }

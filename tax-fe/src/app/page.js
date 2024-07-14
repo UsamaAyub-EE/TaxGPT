@@ -5,6 +5,7 @@ import { InputFileUpload } from '@/shared/components'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import axiosInstance from '@/shared/axiosConfig'
 axios.defaults.baseURL = 'http://localhost:8000'
 
 export default function Home() {
@@ -12,13 +13,16 @@ export default function Home() {
   const router = useRouter()
 
   const fetchFiles = () => {
-    axios
+    axiosInstance
       .get('/file_uploads/files/')
       .then((response) => {
         setFiles(response.data)
       })
       .catch((error) => {
         console.error(error)
+        if (error.response.status === 401) {
+          router.push('/sign-in')
+        }
       })
   }
 
@@ -27,7 +31,7 @@ export default function Home() {
     const formData = new FormData()
     formData.append('file', file)
 
-    axios
+    axiosInstance
       .post('/file_uploads/upload/', formData)
       .then((response) => {
         console.log(response)
@@ -35,6 +39,9 @@ export default function Home() {
       })
       .catch((error) => {
         console.error(error)
+        if (error.response.status === 401) {
+          router.push('/sign-in')
+        }
       })
   }
 
@@ -44,13 +51,11 @@ export default function Home() {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    if (!token) {
-      router.push('/sign-in')
-    }
+    if (!token) router.push('/sign-in')
   }, [])
 
   const handleFileClick = (fileId, fileName) => {
-    axios
+    axiosInstance
       .get(`/file_uploads/files/${fileId}/`, {
         responseType: 'blob'
       })

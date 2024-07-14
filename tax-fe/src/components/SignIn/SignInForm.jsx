@@ -24,7 +24,6 @@ export const SignInForm = () => {
       const response = await axios.post('http://localhost:8000/api/auth/login/', data)
       localStorage.setItem('token', response.data.token)
       router.push('/')
-      console.log(response.data)
     } catch (error) {
       console.error(error)
     }

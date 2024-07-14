@@ -41,10 +41,16 @@ INSTALLED_APPS = [
     'file_uploads.apps.FileUploadsConfig',
     'accounts.apps.AccountsConfig',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     'django_extensions',
-    'rest_framework.authtoken',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

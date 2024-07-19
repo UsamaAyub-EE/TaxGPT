@@ -1,0 +1,10 @@
+services:
+  taxgpt_fe:
+    build: ./tax-fe
+    ports:
+      - 3000:3000
+  taxgpt_be:
+    build: ./tax-be/tax_be
+    ports:
+      - 8000:8000
+
